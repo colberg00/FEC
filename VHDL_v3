@@ -1,0 +1,693 @@
+--=======================================================
+--  Entity decleration
+--=======================================================
+
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+use ieee.std_logic_unsigned.all;
+
+entity Dekodmini_v1 is
+port(
+s1 : in std_logic_vector(2 downto 0);
+s3 : in std_logic_vector(2 downto 0);
+CLK : in std_logic;
+f0  : out std_logic;
+f1  : out std_logic;
+f2  : out std_logic;
+e1  : out std_logic_vector(2 downto 0);
+e21  : out std_logic_vector(3 downto 0);
+e22  : out std_logic_vector(3 downto 0));
+
+end entity Dekodmini_v1;
+
+
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+use ieee.std_logic_unsigned.all;
+
+entity log is
+port  ( num : in std_logic_vector(2 downto 0);
+data_out : out std_logic_vector(2 downto 0));
+end entity;
+
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+use ieee.std_logic_unsigned.all;
+
+entity antilog is
+port  ( num : in std_logic_vector(3 downto 0);
+data_out : out std_logic_vector(2 downto 0));
+end entity;
+
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+use ieee.std_logic_unsigned.all;
+
+entity rod1 is
+port  ( num : in std_logic_vector(3 downto 0);
+data_out : out std_logic_vector(2 downto 0));
+end entity;
+
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+use ieee.std_logic_unsigned.all;
+
+entity rod2 is
+port  ( num : in std_logic_vector(3 downto 0);
+data_out : out std_logic_vector(2 downto 0));
+end entity;
+
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+use ieee.std_logic_unsigned.all;
+
+entity tjekrod is
+port  ( num : in std_logic_vector(3 downto 0);
+data_out : out std_logic);
+end entity;
+
+
+    --DE10_LITE_Empty_Top:
+    --
+-------------- CLOCK ----------
+--input           ADC_CLK_10,
+--input           MAX10_CLK1_50,
+--input           MAX10_CLK2_50,
+    --
+-------------- SDRAM ----------
+--output    [12:0] DRAM_ADDR,
+--output     [1:0] DRAM_BA,
+--output           DRAM_CAS_N,
+--output           DRAM_CKE,
+--output           DRAM_CLK,
+--output           DRAM_CS_N,
+--inout    [15:0] DRAM_DQ,
+--output           DRAM_LDQM,
+--output           DRAM_RAS_N,
+--output           DRAM_UDQM,
+--output           DRAM_WE_N,
+    --
+-------------- SEG7 ----------
+--output     [7:0] HEX0,
+--output     [7:0] HEX1,
+--output     [7:0] HEX2,
+--output     [7:0] HEX3,
+--output     [7:0] HEX4,
+--output     [7:0] HEX5,
+    --
+-------------- KEY ----------
+--input     [1:0] KEY,
+    --
+-------------- LED ----------
+--output     [9:0] LEDR,
+    --
+-------------- SW ----------
+--input     [9:0] SW,
+    --
+-------------- VGA ----------
+--output     [3:0] VGA_B,
+--output     [3:0] VGA_G,
+--output           VGA_HS,
+--output     [3:0] VGA_R,
+--output           VGA_VS,
+    --
+-------------- Accelerometer ----------
+--output           GSENSOR_CS_N,
+--input     [2:1] GSENSOR_INT,
+--output           GSENSOR_SCLK,
+--inout           GSENSOR_SDI,
+--inout           GSENSOR_SDO,
+    --
+-------------- Arduino ----------
+--inout    [15:0] ARDUINO_IO,
+--inout           ARDUINO_RESET_N,
+    --
+-------------- GPIO, GPIO connect to GPIO Default ----------
+--inout    [35:0] GPIO
+
+
+
+
+--=======================================================
+-- Architecture declaration
+--=======================================================
+architecture Dekodmini_v1_arch of Dekodmini_v1 is
+
+signal s1_log: std_logic_vector(2 downto 0);
+signal s3_delay: std_logic_vector(2 downto 0);
+
+
+signal logt_out: std_logic_vector(2 downto 0);
+signal antilogt_out: std_logic_vector(2 downto 0);
+signal logt_out2: std_logic_vector(2 downto 0);
+signal logt_out3: std_logic_vector(2 downto 0);
+
+signal s1s1s1_log: std_logic_vector(4 downto 0);
+signal s3_delay2: std_logic_vector(2 downto 0);
+signal s3_delay3: std_logic_vector(2 downto 0);
+signal s3_delay4: std_logic_vector(2 downto 0);
+signal s3_delay5: std_logic_vector(2 downto 0);
+signal s3_delay6: std_logic_vector(2 downto 0);
+signal s3_delay7: std_logic_vector(2 downto 0);
+signal s3_delay8: std_logic_vector(2 downto 0);
+
+
+
+signal f0_delay: std_logic;
+signal f0_delay1: std_logic;
+signal f0_delay2: std_logic;
+signal f0_delay3: std_logic;
+signal f0_delay4: std_logic;
+signal f0_delay5: std_logic;
+signal f0_delay6: std_logic;
+signal f0_delay7: std_logic;
+signal f0_delay8: std_logic;
+ 
+signal f0d_delay : std_logic;
+
+signal f1_delay: std_logic;
+signal f1_delay1: std_logic;
+signal f1_delay2: std_logic;
+
+signal s1_power3: std_logic_vector(4 downto 0);
+signal s1_power3_f: std_logic_vector(4 downto 0);
+signal s1_power3_f_delay: std_logic_vector(3 downto 0);
+signal s1_power3_f_delay1: std_logic_vector(3 downto 0);
+signal s1_power3_f_delay2: std_logic_vector(3 downto 0);
+signal s1_power3_f_delay3: std_logic_vector(3 downto 0);
+signal s1_power3_f_log: std_logic_vector(3 downto 0);
+
+
+signal s1_log_delay : std_logic_vector(2 downto 0);
+signal s1_log_delay1 : std_logic_vector(2 downto 0);
+signal s1_log_delay2 : std_logic_vector(2 downto 0);
+signal s1_log_delay3 : std_logic_vector(2 downto 0);
+signal s1_log_delay4 : std_logic_vector(2 downto 0);
+signal s1_log_delay5 : std_logic_vector(2 downto 0);
+signal s1_log_delay6 : std_logic_vector(2 downto 0);
+signal s1_log_delay7 : std_logic_vector(2 downto 0);
+
+signal s1_3_antilog : std_logic_vector(2 downto 0);
+signal s1_3_anitlog_delay : std_logic_vector(2 downto 0);
+
+signal xos13s3 : std_logic_vector(2 downto 0);
+
+signal sigma2 : std_logic_vector(2 downto 0);
+
+signal A : std_logic_vector(3 downto 0);
+
+signal rod1_intern : std_logic_vector(2 downto 0);
+
+signal rod2_intern : std_logic_vector(2 downto 0);
+
+signal rod_tjek_intern : std_logic;
+
+signal rod1_intern_delay : std_logic_vector(2 downto 0);
+
+signal rod2_intern_delay : std_logic_vector(2 downto 0);
+
+signal rod_tjek_intern_delay : std_logic;
+
+signal f2_delay : std_logic;
+
+signal e1d_delay : std_logic_vector(2 downto 0);
+
+signal f1d_delay : std_logic;
+
+signal e21d_delay : std_logic_vector(3 downto 0);
+
+signal e22d_delay : std_logic_vector(3 downto 0);
+
+signal f2d_delay : std_logic;
+
+
+
+
+
+
+component log
+port  ( num : in std_logic_vector(2 downto 0);
+data_out : out std_logic_vector(2 downto 0));
+end component;
+
+component antilog
+port  ( num : in std_logic_vector(3 downto 0);
+data_out : out std_logic_vector(2 downto 0));
+end component;
+
+component rod1 is
+port  ( num : in std_logic_vector(3 downto 0);
+data_out : out std_logic_vector(2 downto 0));
+end component;
+
+component rod2 is
+port  ( num : in std_logic_vector(3 downto 0);
+data_out : out std_logic_vector(2 downto 0));
+end component;
+
+
+component tjekrod is
+port  ( num : in std_logic_vector(3 downto 0);
+data_out : out std_logic);
+end component;
+
+begin
+
+log1 : log port map(num => s1, data_out => logt_out);
+logt2 : log port map(num => s3, data_out => logt_out2);
+logt3 : log port map(num => xos13s3, data_out => logt_out3);
+antilog1 : antilog port map(num => s1_power3_f(3 downto 0), data_out => antilogt_out);
+rod11 : rod1 port map(num => A, data_out => rod1_intern);
+rod22 : rod2 port map(num => A, data_out => rod2_intern);
+rodtjek1 : tjekrod port map(num => A, data_out => rod_tjek_intern);
+
+
+
+process (CLK)
+begin
+
+if (rising_edge(CLK)) then
+
+s1_log <=logt_out;
+
+s3_delay <= s3;
+
+if(s1="000" and s3="000") then
+
+f0_delay<='1';
+
+else
+
+f0_delay <= '0';
+
+end if;
+
+end if;
+end process;
+
+
+process(CLK)
+begin
+
+if(rising_edge(CLK)) then
+
+s1s1s1_log <= ("00"&s1_log)+("00"&s1_log)+("00"&s1_log);
+
+s3_delay2 <= s3_delay;
+
+f0_delay1 <= f0_delay;
+
+s1_log_delay <= s1_log;
+
+end if;
+end process;
+
+
+process(CLK)
+begin
+
+if(rising_edge(CLK)) then
+
+
+
+f0_delay2 <= f0_delay1;
+
+s3_delay3 <= s3_delay2;
+
+s1_log_delay1 <= s1_log_delay;
+
+if (s1s1s1_log > 6) then
+
+s1_power3 <= s1s1s1_log-7;
+
+else
+
+s1_power3 <= s1s1s1_log;
+
+end if;
+
+
+end if;
+end process;
+
+process(CLK)
+begin
+
+if(rising_edge(CLK)) then
+
+
+f0_delay3 <= f0_delay2;
+
+s3_delay4 <= s3_delay3;
+
+s1_log_delay2 <= s1_log_delay1;
+
+if (s1_power3 > 6) then
+
+s1_power3_f <= s1_power3-7;
+
+else
+
+s1_power3_f <= s1_power3;
+
+end if;
+
+
+end if;
+end process;
+
+process(CLK)
+begin
+
+if(rising_edge(CLK)) then
+
+s1_power3_f_delay <= s1_power3_f(3 downto 0);
+
+s3_delay5 <= s3_delay4;
+
+s1_3_antilog <=antilogt_out;
+
+f0_delay4 <= f0_delay3;
+
+s1_log_delay3 <= s1_log_delay2;
+
+
+
+end if;
+end process;
+
+
+process(CLK)
+begin
+
+if(rising_edge(CLK)) then
+
+
+s1_power3_f_delay1 <= s1_power3_f_delay;
+
+s3_delay6 <= s3_delay5;
+
+ s1_3_anitlog_delay <= s1_3_antilog;
+
+f0_delay5 <= f0_delay4;
+
+s1_log_delay4 <= s1_log_delay3;
+
+xos13s3 <= s3_delay5 xor s1_3_antilog;
+
+
+
+end if;
+end process;
+
+process(CLK)
+begin
+
+if(rising_edge(CLK)) then
+
+
+s1_power3_f_delay2 <= s1_power3_f_delay1;
+
+s3_delay7 <= s3_delay6;
+
+
+f0_delay6 <= f0_delay5;
+
+s1_log_delay5 <= s1_log_delay4;
+
+sigma2 <= logt_out3;
+
+if(s1_3_anitlog_delay = s3_delay6) then
+
+
+if ((xos13s3="000")or(not s3_delay6= "000")) then
+
+f1_delay <= '1';
+else
+f1_delay <= '0';
+
+end if;
+
+else
+f1_delay <= '0';
+end if;
+
+
+
+
+end if;
+end process;
+
+process(CLK)
+begin
+
+if(rising_edge(CLK)) then
+
+
+s1_power3_f_delay3 <= s1_power3_f_delay2;
+
+s3_delay8 <= s3_delay7;
+
+
+f0_delay7 <= f0_delay6;
+
+s1_log_delay6 <= s1_log_delay5;
+
+f1_delay1 <= f1_delay;
+
+A <= ('0'&sigma2) - (s1_power3_f_delay2) + "0111";
+
+
+
+
+end if;
+end process;
+
+process(CLK)
+begin
+
+if(rising_edge(CLK)) then
+
+
+
+
+f0_delay8 <= f0_delay7;
+
+s1_log_delay7 <= s1_log_delay6;
+
+f1_delay2 <= f1_delay1;
+
+rod1_intern_delay <= rod1_intern;
+
+rod2_intern_delay <= rod2_intern;
+
+rod_tjek_intern_delay <= rod_tjek_intern;
+
+
+
+
+
+end if;
+end process;
+
+
+process(CLK)
+begin
+
+if(rising_edge(CLK)) then
+
+
+
+
+f0d_delay <= f0_delay8;
+
+e1d_delay <= 7-s1_log_delay7;
+
+f1d_delay <= f1_delay2;
+
+e21d_delay <= ('0'&rod1_intern_delay)+('0'&s1_log_delay7);
+
+e22d_delay <= ('0'&rod2_intern_delay)+('0'&s1_log_delay7);
+
+
+if(f1_delay2 = '1') then
+
+f2d_delay <= '0';
+
+else
+
+f2d_delay <= rod_tjek_intern_delay;
+
+end if;
+
+
+
+
+
+end if;
+end process;
+
+process(CLK)
+begin
+
+if(rising_edge(CLK)) then
+
+
+
+f0 <= f0d_delay;
+
+e1 <= e1d_delay;
+
+f1 <= f1d_delay ;
+
+if(e21d_delay>"0110") then
+e21<=e21d_delay-"0111";
+else
+e21<=7-e21d_delay;
+end if;
+
+if(e22d_delay>"0110") then
+e22<=e22d_delay-"0111";
+else
+e22<=7-e22d_delay;
+end if;
+
+
+f2 <= f2d_delay;
+
+
+
+
+end if;
+end process;
+
+
+
+end architecture;
+
+
+
+architecture log_arch of log is
+
+type ROM_type is array (0 to 7) of std_logic_vector(2 downto 0);
+
+constant ROM : ROM_type := (
+0 =>  b"111",
+1 =>  b"000",
+2 =>  b"001",
+3 =>  b"011",
+4 =>  b"010",
+5 =>  b"110",
+6 =>  b"100",
+7 =>  b"101");
+
+begin
+
+data_out <= ROM(to_integer(unsigned(num)));
+
+end architecture;
+
+architecture antilog_arch of antilog is
+
+type ROM_type is array (0 to 7) of std_logic_vector(2 downto 0);
+
+constant ROM : ROM_type := (
+0 =>  b"001",
+1 =>  b"010",
+2 =>  b"100",
+3 =>  b"011",
+4 =>  b"110",
+5 =>  b"111",
+6 =>  b"101",
+7 =>  b"001");
+
+begin
+
+data_out <= ROM(to_integer(unsigned(num)));
+
+end architecture;
+
+architecture rod1_arch of rod1 is
+
+type ROM_type is array (0 to 13) of std_logic_vector(2 downto 0);
+
+constant ROM : ROM_type := ( 0 =>  b"000",
+1 =>  b"010",
+2 =>  b"100",
+3 =>  b"000",
+4 =>  b"001",
+5 =>  b"000",
+6 =>  b"000",
+7 =>  b"000",
+8 =>  b"010",
+9 =>  b"100",
+10 =>  b"000",
+11 =>  b"001",
+12 =>  b"000",
+13 =>  b"000");
+
+begin
+
+data_out <= ROM(to_integer(unsigned(num)));
+
+end architecture;
+
+architecture rod2_arch of rod2 is
+
+type ROM_type is array (0 to 13) of std_logic_vector(2 downto 0);
+
+constant ROM : ROM_type := ( 0 =>  b"000",
+1 =>  b"000",
+2 =>  b"101",
+3 =>  b"000",
+4 =>  b"011",
+5 =>  b"000",
+6 =>  b"000",
+7 =>  b"000",
+8 =>  b"000",
+9 =>  b"101",
+10 =>  b"000",
+11 =>  b"011",
+12 =>  b"000",
+13 =>  b"000");
+
+begin
+
+
+data_out <= ROM(to_integer(unsigned(num)));
+
+end architecture;
+
+
+architecture tjekrod_arch of tjekrod is
+
+type ROM_type is array (0 to 13) of std_logic;
+
+constant ROM : ROM_type := (
+0 => '0',
+1 => '1',
+2 => '1',
+3 => '0',
+4 => '1',
+5 => '0',
+6 => '0',
+7 => '0',
+8 => '1',
+9 => '1',
+10 => '0',
+11 => '1',
+12 => '0',
+13 => '0');
+
+begin
+
+data_out <= ROM(to_integer(unsigned(num)));
+
+end architecture;
+
