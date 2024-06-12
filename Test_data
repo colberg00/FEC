@@ -1,0 +1,146 @@
+force A "01010101"
+force CLK 0 0 , 1 50 -r 100
+force B "10101010"
+
+
+force s1 "001"
+force s3 "010"
+force CLK 0 0 , 1 50 -r 100
+
+force s1 "111"
+force s3 "101"
+force CLK 0 0 , 1 50 -r 100
+
+force s1 "010"
+force s3 "011"
+force CLK 0 0 , 1 50 -r 100
+
+vcom -reportprogress 300 -work work C:/Users/Admin/Desktop/BachProj/Empty_Top/Empty_Top/Dekodmini_v1.vhd
+vsim -gui work.dekodmini_v1
+add wave -position insertpoint sim:/dekodmini_v1/*
+force s1 "010"
+force s3 "011"
+force CLK 0 0 , 1 50 -r 100
+run 1500
+
+vcom -reportprogress 300 -work work C:/Users/Admin/Desktop/BachProj/Empty_Top/Empty_Top/Dekodmini_v1.vhd
+vsim -gui work.dekodmini_v1
+add wave -position insertpoint sim:/dekodmini_v1/*
+force s1 "101"
+force s3 "011"
+force CLK 0 0 , 1 50 -r 100
+run 1500
+
+vcom -reportprogress 300 -work work {C:/Users/Admin/Desktop/bach2/Empty_Top (1)/Empty_Top/dekodstor.vhd}
+vsim -gui work.dekodstor
+add wave -position insertpoint sim:/dekodstor/*
+force s1 "10011011"
+force s3 "01000100"
+force CLK 0 0 , 1 50 -r 100
+run 1500
+
+vcom -reportprogress 300 -work work {C:/Users/Admin/Desktop/bach2/Empty_Top (1)/Empty_Top/dekodstor.vhd}vsim -gui work.dekodmini_v1
+vsim -gui work.dekodstor
+add wave -position insertpoint sim:/dekodstor/*
+force s1 "10101101"
+force s3 "11001111"
+force CLK 0 0 , 1 50 -r 100
+run 1500
+
+vcom -reportprogress 300 -work work {C:/Users/Admin/Desktop/bach2/Empty_Top (1)/Empty_Top/dekodstor.vhd}
+vsim -gui work.dekodstor
+add wave -position insertpoint sim:/dekodstor/*
+force s1 "00000000"
+force s3 "00000000"
+force CLK 0 0 , 1 50 -r 100
+run 1500
+
+vcom -reportprogress 300 -work work C:/Users/Admin/Desktop/bachdekod/Empty_Top/Empty_Top/fejlretmini.vhd
+vsim -gui work.fejlretmini
+add wave -position insertpoint sim:/fejlretmini/*
+force f0 '0'
+force f1 '0'
+force f2 '1'
+force e1 "101"
+force e21 "0001"
+force e22 "0100"
+force dat_in "0000000"
+force CLK 0 0 , 1 50 -r 100
+run 500
+
+force f0 '0'
+force f1 '1'
+force f2 '0'
+force e1 "101"
+force e21 "0001"
+force e22 "0100"
+force dat_in "1000100"
+force CLK 0 0 , 1 50 -r 100
+run 500
+
+force f0 '1'
+force f1 '0'
+force f2 '0'
+force e1 "101"
+force e21 "0001"
+force e22 "0100"
+force dat_in "0000000"
+force CLK 0 0 , 1 50 -r 100
+run 500
+
+
+force f0 '0'
+force f1 '0'
+force f2 '0'
+force e1 "101"
+force e21 "0001"
+force e22 "0100"
+force dat_in "0001100"
+force CLK 0 0 , 1 50 -r 100
+run 500
+
+
+
+vcom -reportprogress 300 -work work C:/Users/Admin/Desktop/bachdekod/Empty_Top/Empty_Top/fejlretmini.vhd
+vsim -gui work.fejlretmini
+add wave -position insertpoint sim:/fejlretmini/*
+force f0 '0'
+force f1 '0'
+force f2 '1'
+force e1 "00000001"
+force e21 "000000001"
+force e22 "000000011"
+force dat_in "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+force CLK 0 0 , 1 50 -r 100
+run 500
+
+force f0 '0'
+force f1 '1'
+force f2 '0'
+force e1 "101"
+force e21 "0001"
+force e22 "0100"
+force dat_in "1000100"
+force CLK 0 0 , 1 50 -r 100
+run 500
+
+force f0 '1'
+force f1 '0'
+force f2 '0'
+force e1 "101"
+force e21 "0001"
+force e22 "0100"
+force dat_in "0000000"
+force CLK 0 0 , 1 50 -r 100
+run 500
+
+
+force f0 '0'
+force f1 '0'
+force f2 '0'
+force e1 "101"
+force e21 "0001"
+force e22 "0100"
+force dat_in "0001100"
+force CLK 0 0 , 1 50 -r 100
+run 500
