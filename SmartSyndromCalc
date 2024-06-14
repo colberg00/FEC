@@ -1,0 +1,53 @@
+s1_syndrome = zeros(1, 8);
+s3_syndrome = zeros(1, 8);
+message_appended = zeros(1, 255);
+message_appended(3) = 1;
+message_appended(6) = 1;
+syndrome_int = 0;
+
+for i = 1:8  
+    s1_syndrome(i) = 0; 
+    for j = 1 : 128
+        if Syndrome1Positions(j) > 0
+        syndrome_int = syndrome_int + message_appended(Syndrome1Positions(j));
+        end
+
+    end
+    s1_syndrome(i) = mod(syndrome_int, 2)
+end
+
+for i = 1:8  
+    s3_syndrome(i) = 0;  
+    for j = 1 : 144
+        if Syndrome3Positions(j) > 0
+        syndrome_int = syndrome_int + message_appended(Syndrome3Positions(j));
+        end
+
+    end
+    s3_syndrome(i) = mod(syndrome_int, 2)
+end
+s1_syndrome_int = num2str(s1_syndrome);
+s3_syndrome_int = num2str(s3_syndrome);
+s1_syndrome_int = bin2dec(s1_syndrome_int)
+s3_syndrome_int = bin2dec(s3_syndrome_int)
+
+%{
+s1 = zeros(1, 8);
+s3 = zeros(1, 8);
+
+    for i = 1:8  % Assume 8 bits for each syndrome
+        % Filter out zeros from s1 indices
+        valid_s1_indices = Syndrome1Positions(i, :);
+        valid_s1_indices = valid_s1_indices(valid_s1_indices > 0);  % Keep only positive, non-zero indices
+        if ~isempty(valid_s1_indices)
+            s1(i) = mod(sum(message_appended(valid_s1_indices)), 2);  % No need to add 1 due to proper indexing
+        end
+
+        % Filter out zeros from s3 indices
+        valid_s3_indices = Syndrome3Positions(i, :);
+        valid_s3_indices = valid_s3_indices(valid_s3_indices > 0);  % Keep only positive, non-zero indices
+        if ~isempty(valid_s3_indices)
+            s3(i) = mod(sum(message_appended(valid_s3_indices)), 2);
+        end
+    end
+    %}
