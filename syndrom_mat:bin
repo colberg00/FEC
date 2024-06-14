@@ -1,0 +1,50 @@
+r=zeros(1,255);
+
+r(3)=1;
+r(6)=1;
+
+a=int2bit(173,8);
+a
+transpose(a)
+bit2int(a,8)
+
+result=r;
+
+k=length(r);
+
+s1=zeros(1,8);
+
+s3=zeros(1,8);
+
+for i=1:k
+    if r(i)==1
+      s1=bitxor(s1,transpose(int2bit(antilog((k-i)+1),8)))
+    end
+end
+
+s1
+bit2int(transpose(s1),8)
+
+if (bit2int(transpose(s1),8))==0
+    s1log=-1;
+else
+    s1log=logtable(bit2int(transpose(s1),8));
+end
+
+
+
+for i=1:k
+    if r(i)==1
+        s3=bitxor(s3,transpose(int2bit(antilog(mod(k-i*3,str)+1),8))); %Istedet for modulo større tabel
+    end
+end
+
+s3
+bit2int(transpose(s3),8)
+
+if bit2int(transpose(s3),8)==0
+    s3log=-1;
+else
+    s3log=logtable(bit2int(transpose(s3),8));
+end
+
