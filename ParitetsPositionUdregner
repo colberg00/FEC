@@ -1,0 +1,40 @@
+primpolynomial = [1 0 0 0 1 1 1 0 1];
+genpolynomial = [1 0 1 1 0 1 1 1 1 0 1 1 0 0 0 1 1];
+paritetsbittabel = zeros(239, 16);
+message = zeros(1, 239);
+
+for j = 1:length(message)
+    message_padded = [message, zeros(1, length(genpolynomial)-1)];
+    message_padded(j) = 1;
+    for i = 1:length(message)
+        if message_padded(i) == 1
+             xor_range = min(i+length(genpolynomial)-1, length(message_padded));
+             message_padded(i:xor_range) = bitxor(message_padded(i:xor_range), genpolynomial(1:(xor_range-i+1)));
+        end
+    end
+    paritetsbittabel(j, 1:16) = message_padded(240:255);
+end
+
+% Print each vector of indices in the desired format
+for col = 1:16
+    indices = find(paritetsbittabel(:, col)) - 1;
+    formatted_indices = sprintf('%d, ', indices);
+    formatted_indices = formatted_indices(1:end-2);
+    fprintf('(%s)\n', formatted_indices);
+end
+for col = 1:16
+    indices = find(paritetsbittabel(:, col)) - 1;
+    num_indices = length(indices); % Get the number of indices
+    fprintf('Length of indices array for column %d: %d\n', col, num_indices);
+end
+
+for col = 1:16
+    indices = find(paritetsbittabel(:, col));  % Get indices directly
+    if length(indices) < 135
+        indices = [indices; zeros(135 - length(indices), 1)];  % Pad with zeros if less than 135
+    end
+    formatted_indices = sprintf('%d ', indices);  % Create a space-separated string of indices
+    formatted_indices = formatted_indices(1:end-1);  % Remove the last extra space
+    fprintf('paritetpositions(%d, :) = [%s];\n', col, formatted_indices);  % Print in the required format
+end
+
