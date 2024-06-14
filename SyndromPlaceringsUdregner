@@ -1,0 +1,85 @@
+n=8;
+str=2^n-1;
+
+al=zeros(1,str);
+lt=zeros(1,str);
+
+x=1;
+
+for i=1:str
+
+    if x>str
+        x=bitxor(x,285);
+    end
+    %Indexs 1=0 o.s.v
+    al(i)=x;
+    lt(x)=i-1;
+    x=x*2;
+   
+end
+
+setAntilog(al);
+antilog=getantilog;
+syndromPositions_s1 = zeros(255, 8);
+syndromPositions_s3 = zeros(255, 8);
+data = zeros(1, 255);
+
+
+for i=1:255
+    data(i) = 1;
+    s1 = 0;
+    s3 = 0;
+    for j=1:255
+        if data(j) == 1 
+            s1 = bitxor(s1, antilog((255-j)+1));
+            if j <= k
+                s3 = bitxor(s3, antilog(mod(k-j*3, str)+1));
+            end
+        end
+    end
+    s1_bit = dec2bin(s1, 8) - '0'; 
+    s3_bit = dec2bin(s3, 8) - '0';
+    syndromePositions_s1(i, :) = s1_bit;
+    syndromePositions_s3(i, :) = s3_bit;        
+    data(i) = 0;
+end
+
+
+    Syndrome1Positions = zeros(8, 128); 
+    Syndrome3Positions = zeros(8, 144);
+
+    for col = 1:8
+        indices_s1 = find(syndromePositions_s1(:, col));
+        length(indices_s1)
+        Syndrome1Positions(col, 1:length(indices_s1)) = indices_s1;
+    end
+
+    for col = 1:8
+        indices_s3 = find(syndromePositions_s3(:, col));
+        length(indices_s3)
+        Syndrome3Positions(col, 1:length(indices_s3)) = indices_s3;
+    end
+
+    return
+
+
+
+function setLogtable(x)
+global logtable 
+logtable=x;
+end
+
+function r = getlogtable
+global logtable
+r = logtable;
+end
+
+function setAntilog(x)
+global antilog
+antilog=x;
+end
+
+function r = getantilog
+global antilog
+r = antilog;
+end
