@@ -1,5 +1,24 @@
 
 --=======================================================
+--  Entity decleration
+
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+
+entity bch_encoder is
+port (
+		clk : in  STD_LOGIC;
+		reset : in  STD_LOGIC;
+		message : in  STD_LOGIC_VECTOR (0 to 238);
+		parity_bits_out : out STD_LOGIC_VECTOR (0 to 15);
+		message_out : out STD_LOGIC_VECTOR (0 to 254)
+);
+end entity bch_encoder;
+
+--=======================================================
+
+--=======================================================
 -- Architecture declaration
 
 architecture bch_encoder_arch of bch_encoder is
@@ -80,6 +99,9 @@ begin
 	 
 end architecture ;
 
+
+
+--=======================================================
 
 
 --=======================================================
