@@ -1,0 +1,177 @@
+
+--=======================================================
+--  Entity decleration
+--=======================================================
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+use ieee.std_logic_unsigned.all;
+
+entity sam_sys is
+port(
+	CLK : in std_logic;
+	BIT_in : in std_logic;
+	Reset : in std_logic;
+	BIT_out : out std_logic
+	);
+end entity;
+
+
+
+--=======================================================
+-- Architecture declaration
+--=======================================================
+
+architecture sam_sys_arch of sam_sys is
+-- Signaler
+
+signal en1 : std_logic;
+signal en2 : std_logic;
+signal en3 : std_logic;
+signal en4 : std_logic;
+signal en5 : std_logic;
+signal en6 : std_logic;
+
+
+signal mes1 : STD_LOGIC_VECTOR(238 DOWNTO 0);
+signal mes2 : STD_LOGIC_VECTOR(254 DOWNTO 0);
+signal mes3 : STD_LOGIC_VECTOR(254 DOWNTO 0);
+signal mes4 : STD_LOGIC_VECTOR(254 DOWNTO 0);
+signal mes5 : STD_LOGIC_VECTOR(254 DOWNTO 0);
+signal mes6 : STD_LOGIC_VECTOR(254 DOWNTO 0);
+signal part_ud : STD_LOGIC_VECTOR(0 TO 15);
+signal syn : std_logic_vector(15 downto 0);
+signal F0 : std_logic;
+signal F1 : std_logic;
+signal F2 : std_logic;
+signal E1 : STD_LOGIC_VECTOR(7 DOWNTO 0);
+signal E21 : STD_LOGIC_VECTOR(8 DOWNTO 0);
+signal E22 : STD_LOGIC_VECTOR(8 DOWNTO 0);
+
+
+-- Komponenter
+
+
+
+COMPONENT sam_mes
+	PORT
+	(
+		clk : in  STD_LOGIC;
+		reset : in  STD_LOGIC;
+		bit_in : in std_logic;
+		mes : out STD_LOGIC_VECTOR (238 downto 0);
+		en_sig : out std_logic
+	);
+END COMPONENT;
+
+COMPONENT bch_encoder
+	PORT
+	(
+		clk : in  STD_LOGIC;
+		enable_in : in std_logic;
+		reset : in  STD_LOGIC;
+		message : in  STD_LOGIC_VECTOR (0 to 238);
+		parity_bits_out : out STD_LOGIC_VECTOR (0 to 15);
+		message_out : out STD_LOGIC_VECTOR (0 to 254);
+		enable_out : out std_logic
+	);
+END COMPONENT;
+
+COMPONENT noise
+	PORT
+	(
+		en_in : in std_logic;
+      CLK     	   : in  std_logic;
+      dat_in 		: in std_logic_vector(254 downto 0);
+		dat_out 		: out std_logic_vector(254 downto 0);
+		en_out : out std_logic
+	);
+END COMPONENT;
+
+COMPONENT syndrome_calc
+	PORT
+	(
+		en_in : in std_logic;
+		clk : in  STD_LOGIC;
+		reset : in  STD_LOGIC;
+		message : in  STD_LOGIC_VECTOR (0 to 254);
+		syndrome_bits : out STD_LOGIC_VECTOR (0 to 15);
+		message_out : out  STD_LOGIC_VECTOR (0 to 254);
+		en_out : out std_logic
+	);
+END COMPONENT;
+
+COMPONENT dekodstor
+	PORT
+	(
+				en_in : in std_logic;
+			s1 : in std_logic_vector(7 downto 0);
+			s3 : in std_logic_vector(7 downto 0);
+			CLK : in std_logic;
+			Message_in: in std_logic_vector(254 downto 0);
+			Message_out: out std_logic_vector(254 downto 0);
+			f0  : out std_logic;
+			f1  : out std_logic;
+			f2  : out std_logic;
+			e1  : out std_logic_vector(7 downto 0);
+			e21  : out std_logic_vector(8 downto 0);
+			e22  : out std_logic_vector(8 downto 0);
+			en_out : out std_logic
+	);
+END COMPONENT;
+
+COMPONENT fejlret_stor
+	PORT
+	(
+		en_in : in std_logic;
+		CLK : in std_logic;
+		f0  : in std_logic;
+		f1  :	in std_logic;
+		f2  : in std_logic;
+		e1  : in std_logic_vector(7 downto 0);
+		e21 :  in std_logic_vector(8 downto 0);
+		e22 : in std_logic_vector(8 downto 0);
+		dat_in : in std_logic_vector(254 downto 0);
+		dat_out : out std_logic_vector(254 downto 0);
+		en_out : out std_logic
+	);
+END COMPONENT;
+
+COMPONENT del_mes
+	PORT
+	(
+		en_in : in std_logic;
+		clk : in  STD_LOGIC;
+		reset : in  STD_LOGIC;
+		mes : in STD_LOGIC_VECTOR (238 downto 0);
+		bit_out : out std_logic
+	);
+END COMPONENT;
+
+
+
+
+
+begin
+
+-- Port sætning
+	sam_mes1 : sam_mes port map(clk  => CLK	,	reset => Reset, bit_in => BIT_in, mes => mes1, en_sig => en1);
+	bch_encoder1 : bch_encoder port map (clk => CLK, reset => Reset, enable_in => en1, message => mes1, parity_bits_out	=> part_ud, message_out	=> mes2, enable_out => en2);
+	noise1 : noise port map (en_in => en2, CLK => CLK, dat_in => mes2, dat_out => mes3, en_out => en3);
+	syndrome_calc1 : syndrome_calc port map (en_in => en3, clk	=> CLK, reset => Reset, message => mes3, syndrome_bits	=> syn, message_out => mes4, en_out => en4);
+	dekodstor1 : dekodstor port map (en_in => en4 ,s1	=> syn(15 downto 8), s3	=> syn(7 downto 0), CLK => CLK, Message_in => mes4, Message_out => mes5, f0 => F0, f1 => F1, f2 => F2, e1 => E1, e21 => E21, e22 => E22, en_out => en5);
+	fejlret_stor1 : fejlret_stor port map (en_in => en5, CLK => CLK, f0	=> F0, f1 => F1, f2 => F2, e1 => E1, e21 => E21, e22	=> E22, dat_in	=> mes5, dat_out => mes6, en_out => en6 );
+	del_mes1 : del_mes port map (en_in => en6, clk => CLK, reset => Reset, mes	=> mes6(238 downto 0), bit_out => BIT_out);
+	
+-- indhold
+
+	
+
+
+
+
+
+end architecture;
+
+
+
