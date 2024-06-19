@@ -1,3 +1,37 @@
+
+
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+use ieee.std_logic_unsigned.all;
+
+entity noise is
+    Port (
+		en_in : in std_logic;
+      CLK     	   : in  std_logic;
+      dat_in 		: in std_logic_vector(254 downto 0);
+		dat_out 		: out std_logic_vector(254 downto 0);
+		en_out : out std_logic
+       
+    );
+end noise;
+
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+use ieee.std_logic_unsigned.all;
+
+entity noiserom is
+port  ( num : in std_logic_vector(3 downto 0);
+		data_out : out std_logic_vector(254 downto 0));
+end entity;
+
+
+architecture noise_arch of noise is
+
+signal num_count : std_logic_vector (3 downto 0) := "0000";
+signal noise_temp : std_logic_vector (254 downto 0);
+
 component noiserom 
 port  ( num : in std_logic_vector(3 downto 0);
 		data_out : out std_logic_vector(254 downto 0));
@@ -27,7 +61,7 @@ begin
 			
 			end if; 
 			
-			dat_out <= dat_in + noise_temp;
+			dat_out <= dat_in xor noise_temp;
 			
 			
 			
