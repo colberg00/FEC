@@ -26,6 +26,7 @@ end entity;
 architecture sam_mes_arch of sam_mes is
 
 signal numcount : std_logic_vector(7 downto 0);
+signal reg : STD_LOGIC_VECTOR (238 downto 0);
 
 
 begin
@@ -38,13 +39,15 @@ process(clk)
 			
 				if (numcount < 238) then
 				
-				mes(to_integer(unsigned(numcount)))<=bit_in;
+				reg<=bit_in & reg(238 downto 1);
 				
 				numcount <= numcount+1;
 				
 				elsif (numcount = 238) then
 				
-				mes(to_integer(unsigned(numcount)))<=bit_in;
+				mes  <=bit_in & reg(238 downto 1);
+				reg  <=bit_in & reg(238 downto 1);
+				
 				numcount <= numcount+1;
 				en_sig <= '1';
 				
@@ -62,9 +65,5 @@ end process;
 
 
 end architecture;
-
-
-
-
 
 
