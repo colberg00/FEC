@@ -41,30 +41,26 @@ process(clk)
 				if en_in = '1' then
 				reg <= mes;
 				numcount <= "00000000";
+				bit_out <= mes(238);
+				
+				else
+					
+					if numcount > 238 then
+					numcount <= "00000000";
+					end if;
+					
+					bit_out <= reg(238);
+					numcount <= numcount+1;
+					reg(238 downto 1)	<= reg(237 downto 0);
 				
 				end if;
-				
-				if numcount > 238 then
-				numcount <= "00000000";
-				end if;
-				
-				
-				bit_out <= reg(to_integer(unsigned(numcount)));
-				numcount <= numcount+1;
-			
 			
 			end if;
 			
 end process;
 
 
-
-
-
-
-
 end architecture;
-
 
 
 
