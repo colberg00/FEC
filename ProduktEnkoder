@@ -1,0 +1,171 @@
+
+--=======================================================
+--  Entity decleration
+
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+
+entity product_encoder is
+port (
+		clk : in  STD_LOGIC;
+		reset : in  STD_LOGIC;
+		message : in  STD_LOGIC_VECTOR (0 to 238);
+		message_encoded : out STD_LOGIC_VECTOR (0 to 254)
+);
+end entity product_encoder;
+
+
+--=======================================================
+
+    --DE10_LITE_Empty_Top: 
+    --
+	-------------- CLOCK ----------
+	--input 		          		ADC_CLK_10,
+	--input 		          		MAX10_CLK1_50,
+	--input 		          		MAX10_CLK2_50,
+    --
+	-------------- SDRAM ----------
+	--output		    [12:0]		DRAM_ADDR,
+	--output		     [1:0]		DRAM_BA,
+	--output		          		DRAM_CAS_N,
+	--output		          		DRAM_CKE,
+	--output		          		DRAM_CLK,
+	--output		          		DRAM_CS_N,
+	--inout 		    [15:0]		DRAM_DQ,
+	--output		          		DRAM_LDQM,
+	--output		          		DRAM_RAS_N,
+	--output		          		DRAM_UDQM,
+	--output		          		DRAM_WE_N,
+    --
+	-------------- SEG7 ----------
+	--output		     [7:0]		HEX0,
+	--output		     [7:0]		HEX1,
+	--output		     [7:0]		HEX2,
+	--output		     [7:0]		HEX3,
+	--output		     [7:0]		HEX4,
+	--output		     [7:0]		HEX5,
+    --
+	-------------- KEY ----------
+	--input 		     [1:0]		KEY,
+    --
+	-------------- LED ----------
+	--output		     [9:0]		LEDR,
+    --
+	-------------- SW ----------
+	--input 		     [9:0]		SW,
+    --
+	-------------- VGA ----------
+	--output		     [3:0]		VGA_B,
+	--output		     [3:0]		VGA_G,
+	--output		          		VGA_HS,
+	--output		     [3:0]		VGA_R,
+	--output		          		VGA_VS,
+    --
+	-------------- Accelerometer ----------
+	--output		          		GSENSOR_CS_N,
+	--input 		     [2:1]		GSENSOR_INT,
+	--output		          		GSENSOR_SCLK,
+	--inout 		          		GSENSOR_SDI,
+	--inout 		          		GSENSOR_SDO,
+    --
+	-------------- Arduino ----------
+	--inout 		    [15:0]		ARDUINO_IO,
+	--inout 		          		ARDUINO_RESET_N,
+    --
+	-------------- GPIO, GPIO connect to GPIO Default ----------
+	--inout 		    [35:0]		GPIO
+
+
+
+
+--=======================================================
+-- Architecture declaration
+
+
+architecture Behavioral of bch_encoder is
+	signal paritybit : std_logic := '0';
+	signal row : integer;
+	signal ram_wren : std_logic := '0';
+	signal col_calc : std_logic;
+	signal position : integer := '0';
+	signal ram_wraddress : std_logic_vector(15 downto 0);
+	signal ram_rdaddress  : std_logic_vector(15 downto 0);
+	signal ram_data :  std_logic_vector(0 downto 0);
+
+	
+component RAM is
+	  port (
+			clock      : in  std_logic := '1';
+			data       : in  std_logic_vector(0 downto 0);
+			rdaddress  : in  std_logic_vector(15 downto 0);
+			wraddress  : in  std_logic_vector(15 downto 0);
+			wr_en      : in  std_logic := '0';
+			q          : out std_logic_vector(0 downto 0)
+	  );
+end component;
+
+begin
+
+ram_instance : RAM
+	  port map (
+			clock => clk,
+			data => ram_data,
+			rdaddress => ram_rd_addr,
+			wraddress => ram_wr_addr,
+			wr_en => ram_wren,
+			q => ram_q
+	  );
+  
+process(clk, reset)
+begin
+if reset = '1' then
+  paritybit <= '0';
+  row <= 0;
+  position <= 0; 
+  ram_wraddress <= (others => '0'); 
+  ram_wren <= '0'; 
+  
+elsif rising_edge(clk) then
+	if position <= 238 and row <= 238 then 
+		ram_wren <= '1';  
+		ram_data(0) <= message(position);
+		ram_wraddress <= std_logic_vector(to_unsigned(row * 239 + position, 16));
+		position <= position + 1;
+		
+		elsif position > 238 then
+		
+			-- Paritetsbit 1 udregnet og written i RAM
+			ram_data(0) := message(0) xor message(1) xor message(2) xor message(3) xor message(4) xor message(8) xor message(9) xor message(10) xor message(11) xor message(12) xor message(15) xor message(16) xor message(19) xor message(20) xor message(21) xor message(25) xor message(26) xor message(27) xor message(28) xor message(30) xor message(32) xor message(34) xor message(35) xor message(36) xor message(38) xor message(41) xor message(50) xor message(52) xor message(53) xor message(54) xor message(55) xor message(58) xor message(62) xor message(63) xor message(65) xor message(70) xor message(72) xor message(74) xor message(80) xor message(83) xor message(84) xor message(86) xor message(89) xor message(91) xor message(93) xor message(95) xor message(96) xor message(98) xor message(100) xor message(101) xor message(104) xor message(107) xor message(109) xor message(110) xor message(111) xor message(113) xor message(115) xor message(116) xor message(118) xor message(119) xor message(120) xor message(121) xor message(122) xor message(123) xor message(126) xor message(130) xor message(132) xor message(133) xor message(135) xor message(142) xor message(143) xor message(149) xor message(151) xor message(152) xor message(153) xor message(154) xor message(155) xor message(159) xor message(162) xor message(164) xor message(165) xor message(167) xor message(170) xor message(173) xor message(174) xor message(175) xor message(176) xor message(177) xor message(178) xor message(179) xor message(183) xor message(185) xor message(186) xor message(187) xor message(188) xor message(189) xor message(195) xor message(197) xor message(198) xor message(203) xor message(205) xor message(209) xor message(210) xor message(213) xor message(214) xor message(216) xor message(217) xor message(218) xor message(219) xor message(222) xor message(223) xor message(224) xor message(226) xor message(231) xor message(233) xor message(234) xor message(235) xor message(236) xor message(237);
+			ram_wraddress := ram_wraddress + 1;
+			
+			position := 0;
+			row := row + 1;
+			
+			-- Udregn paritetsbits og write
+			ram_wraddress := std_logic_vector(to_unsigned(239 * 239 + row * 16 + i, 16));
+			
+			if row > 238 then
+				row := 0;
+            ram_wren := '0';
+	
+	
+	end if;
+
+ end process;
+end Behavioral;
+		
+		
+		
+		
+		
+		
+		
+		
+		
+--=======================================================
+
+
+
+
+
